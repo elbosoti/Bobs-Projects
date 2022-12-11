@@ -49,7 +49,7 @@ function GetGraphicsCards{
             Type = "Graphics Card"
             Brand = $graphics.AdapterCompatibility
             Model = $graphics.Name
-            Size = DisplayInBytes($graphics.AdapterRAM)
+            Size = DisplayInBytes($graphics.AdapterRAM) #This will only go up to 4GB VRAM because it uses an uint32, thanks Microsoft
         }
     }
     return $graphicsCardArray
@@ -72,6 +72,7 @@ function GetMemory{
 
 function GetDrives{
     $drives = Get-PhysicalDisk
+    $drives = Get-PhysicalDisk #Duplicate line because Get-PhysicalDisk might return empty on first run, thanks Microsoft
     $driveArray = @()
     foreach($drive in $drives){
         $driveArray += [PSCustomObject]@{

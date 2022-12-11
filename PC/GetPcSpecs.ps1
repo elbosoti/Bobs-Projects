@@ -1,20 +1,22 @@
+#iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/elbosoti/Bobs-Projects/main/PC/GetPcSpecs.ps1'))
 
-
-function GetPcSpecsCsv{
+function GetPcSpecsArray{
     $systemSpecs = @(
-        getProcessorString
-        getMotherboardString
+        getProcessor
+        getMotherboard
     )
     $systemSpecs += GetGraphicsCards
     $systemSpecs += getMemory
     $systemSpecs += getDrives
-    $systemSpecs
+    return $systemSpecs
 }
 
 
+function GetSystemInfo{
 
+}
 
-function GetProcessorString{
+function GetProcessor{
     $processorInfo = Get-CimInstance -ClassName Win32_Processor
     $processorObject = [PSCustomObject]@{
         Type = "Processor"
@@ -26,13 +28,15 @@ function GetProcessorString{
 }
 
 
-function GetMotherboardString {
+function GetMotherboard{
     $motherboardInfo = Get-CimInstance -ClassName Win32_BaseBoard
+    $biosInfo = Get-CimInstance -ClassName Win32_BIOS
     $motherboardObject = [PSCustomObject]@{
         Type = "Motherboard"
-        Brand = $motherboardInfo."Manufacturer"
-        Model = $motherboardInfo."Product"
-        Extra = $motherboardInfo."SerialNumber"
+        Brand = $motherboardInfo.Manufacturer
+        Model = $motherboardInfo.Product
+        Size = $biosInfo.Caption
+        Extra = $motherboardInfo.SerialNumber
     }
     return $motherboardObject
 }
@@ -89,4 +93,6 @@ function DisplayInBytes($size){
     }
     return [math]::Round($size, 2).ToString() + $units[$index]
 }
-getPcSpecsCsv
+getPcSpecsArray
+
+
